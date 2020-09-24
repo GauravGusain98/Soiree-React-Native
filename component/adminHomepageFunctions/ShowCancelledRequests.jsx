@@ -42,7 +42,7 @@ const ShowCancelledRequests = () => {
 	let temp = [];
 
 	const useFetch = () => {
-		fetch('http://192.168.29.121/api/mobile-cancelled-requests', {
+		fetch('http://192.168.29.122/api/mobile-cancelled-requests', {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
@@ -81,7 +81,7 @@ const ShowCancelledRequests = () => {
 			</Text>
 		);
 		setButtonDiv(temp);
-		fetch('http://192.168.29.121/api/mobile-confirm-requests', {
+		fetch('http://192.168.29.122/api/mobile-confirm-requests', {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',

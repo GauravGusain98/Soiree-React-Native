@@ -58,9 +58,9 @@ const styles = StyleSheet.create({
 	}
 });
 
-// const Homepage = ({ navigation, route }) => {
-// 	const user = route.params.user;
-const Homepage = ({ navigation }) => {
+const Homepage = ({ navigation, route }) => {
+	const user = route.params.user;
+	// const Homepage = ({ navigation }) => {
 	const [ menu, setMenu ] = useState({
 		showRequests: false,
 		showFunction: false,
@@ -78,12 +78,12 @@ const Homepage = ({ navigation }) => {
 				</TouchableHighlight>
 			</View>
 			<View style={styles.layout}>
-				{/* <Text style={[ styles.greeting ]} numberOfLines={1}>
-					Hello {user.name}
-				</Text> */}
 				<Text style={[ styles.greeting ]} numberOfLines={1}>
-					Hello Gaurav Gusain
+					Hello {user.name}
 				</Text>
+				{/* <Text style={[ styles.greeting ]} numberOfLines={1}>
+					Hello Gaurav Gusain
+				</Text> */}
 
 				<View style={[ styles.menu ]}>
 					<TouchableHighlight

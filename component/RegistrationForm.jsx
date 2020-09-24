@@ -53,7 +53,7 @@ const RegistrationForm = ({ navigation }) => {
 	};
 
 	const submit = () => {
-		fetch('http://192.168.29.121/api/mobile-register', {
+		fetch('http://192.168.29.122/api/mobile-register', {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',

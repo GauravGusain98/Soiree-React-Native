@@ -45,7 +45,7 @@ function LoginForm({ navigation }) {
 		if (admin.verify == true) {
 			console.log(admin.user);
 			navigation.navigate('Homepage', { user: admin.user });
-		} else if (admin.verify == 'no') {
+		} else if (admin.verify == 'not') {
 			navigation.navigate('Verification', { email: admin.email, password: admin.password });
 		}
 	});
@@ -54,7 +54,7 @@ function LoginForm({ navigation }) {
 		// if (admin.email.trim() == '' || admin.password == '') {
 		// 	return setAdmin({ ...admin, error: 'Please fill all credentials.' });
 		// } else {
-		fetch('http://192.168.29.121/api/mobile-login', {
+		fetch('http://192.168.29.122/api/mobile-login', {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',

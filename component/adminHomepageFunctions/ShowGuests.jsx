@@ -24,7 +24,7 @@ const ShowGuests = () => {
 	const [ currentIndex, setCurrentIndex ] = useState(null);
 	var emailList = [];
 	const useFetch = () => {
-		fetch('http://192.168.29.121/api/mobile-guests', {
+		fetch('http://192.168.29.122/api/mobile-guests', {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',

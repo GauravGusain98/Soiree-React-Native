@@ -98,6 +98,7 @@ const ShowFunction = () => {
 	const [ timePickerindex, setTimePickerIndex ] = useState(null);
 	const [ functionData, setFunctionData ] = useState(null);
 	const [ referenceData, setReferenceData ] = useState(null);
+	const [ error, setError ] = useState(null);
 
 	const eventTimePickerVisibility = (index) => {
 		setEventTimePickerVisibility(true);
@@ -138,12 +139,13 @@ const ShowFunction = () => {
 	};
 
 	const deleteEvent = (index, key) => {
-		functionData[index].eventData.splice(key, 1);
-		setFunctionData({ ...functionData, eventData: functionData.eventData });
+		var temp = [ ...functionData ];
+		temp[index].eventData.splice(key, 1);
+		setFunctionData([ ...temp ]);
 	};
 
 	const useFetch = async () => {
-		fetch('http://192.168.29.121/api/mobile-functions', {
+		fetch('http://192.168.29.122/api/mobile-functions', {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
@@ -158,6 +160,7 @@ const ShowFunction = () => {
 						Name: item.Name,
 						Date: item.Date,
 						Time: item.Time,
+						oldDate: item.Date,
 						eventData: []
 					});
 					for (let i = 1; response[index]['event' + i] != undefined; i++) {
@@ -168,8 +171,8 @@ const ShowFunction = () => {
 					}
 				});
 
-				console.log(tempArray, response);
-
+				console.log(tempArray);
+				console.log(response);
 				setData(JSON.parse(JSON.stringify(response)));
 				setFunctionData(JSON.parse(JSON.stringify(tempArray)));
 				setReferenceData(JSON.parse(JSON.stringify(tempArray)));
@@ -181,10 +184,6 @@ const ShowFunction = () => {
 
 	const updateData = (e, index, prop) => {
 		var temp = [ ...functionData ];
-		if (prop == 'Date') {
-			temp[index]['oldDate'] = referenceData[index]['Date'];
-		}
-
 		temp[index][prop] = e;
 		setFunctionData([ ...temp ]);
 		console.log(functionData);
@@ -192,19 +191,18 @@ const ShowFunction = () => {
 
 	const eventNameHandler = (name, key, index) => {
 		var temp = [ ...functionData ];
-
 		temp[index].eventData[key].eventName = name;
-		setFunctionData([ ...temp ]);
+		setFunctionData(temp);
 		console.log(functionData);
 	};
 
 	const eventTimeHandler = (time, key, index) => {
-		const hour = time.getHours();
+		// const hour = time.getHours();
 
-		const hh = hour > 12 ? (hour - 12).toString() : hour.toString();
-		const mmss = time.toTimeString().substring(2, 8);
-		const meridian = hour > 12 ? ' PM' : ' AM';
-		const timeWanted = hh + mmss + meridian;
+		// const hh = hour > 12 ? (hour - 12).toString() : hour.toString();
+		// const mmss = time.toTimeString().substring(2, 8);
+		// const meridian = hour > 12 ? ' PM' : ' AM';
+		// const timeWanted = hh + mmss + meridian;
 
 		var temp = [ ...functionData ];
 		temp[index].eventData[key].eventTime = time.toTimeString().substring(0, 8);
@@ -212,6 +210,120 @@ const ShowFunction = () => {
 		setFunctionData([ ...temp ]);
 		setEventTimePickerVisibility(false);
 		console.log(functionData);
+	};
+
+	const validate = (index) => {
+		setError(null);
+		setTimeout(function() {
+			let isFilledFlag = true;
+			if (
+				functionData[index].Name.trim() == '' ||
+				functionData[index].Date == '' ||
+				functionData[index].Time == ''
+			) {
+				isFilledFlag = false;
+			} else {
+				functionData[index].eventData.map((item) => {
+					console.log(item.eventName);
+					if (item.eventName.trim() == '' || item.eventTime == '') {
+						isFilledFlag = false;
+					}
+				});
+			}
+			if (isFilledFlag == false) {
+				setError('Please fill all the details');
+			} else {
+				save(index);
+			}
+		}, 200);
+	};
+
+	const save = (index) => {
+		let str = '';
+		let str1 = JSON.stringify({
+			name: functionData[index].Name,
+			date: functionData[index].Date,
+			time: functionData[index].Time,
+			oldDate: functionData[index].oldDate,
+			count: functionData[index].eventData.length
+		});
+		for (let i = 0; i < functionData[index].eventData.length; i++) {
+			if (i + 1 == functionData[index].eventData.length) {
+				str +=
+					'"event' +
+					(i + 1) +
+					'"' +
+					':"' +
+					functionData[index].eventData[i].eventName +
+					'",' +
+					'"eventtime' +
+					(i + 1) +
+					'":"' +
+					functionData[index].eventData[i].eventTime +
+					'"}';
+			} else {
+				str +=
+					'"event' +
+					(i + 1) +
+					'":"' +
+					functionData[index].eventData[i].eventName +
+					'",' +
+					'"eventtime' +
+					(i + 1) +
+					'":"' +
+					functionData[index].eventData[i].eventTime +
+					'",';
+			}
+		}
+		let str2 = functionData[index].eventData.length == 0 ? str1 : str1.substring(0, str1.length - 1) + ', ' + str;
+		console.log(str2);
+		fetch('http://192.168.29.122/api/save-edited-function', {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: str2
+		})
+			.then((response) => response.json())
+			.then((resp) => {
+				if (resp.code == 500) {
+					setError('A Function is already Booked for the given Date.');
+				} else {
+					alert('Function Successfully Edited.');
+					setReferenceData(JSON.parse(JSON.stringify(functionData)));
+				}
+				console.log(resp);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	};
+
+	const deleteFunction = (index) => {
+		fetch('http://192.168.29.122/api/delete-function', {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				date: functionData[index].oldDate
+			})
+		})
+			.then((response) => response.json())
+			.then((resp) => {
+				if (resp.code == 500) {
+					setError('A Function is already Booked for the given Date.');
+				} else {
+					alert('Function Successfully Edited.');
+					setReferenceData(JSON.parse(JSON.stringify(functionData)));
+				}
+				console.log(resp);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
 	};
 
 	useEffect(() => {
@@ -242,6 +354,7 @@ const ShowFunction = () => {
 							onPress={() => {
 								setEdit(false);
 								setEditIndex(index);
+								validate(index);
 							}}
 						>
 							<Text style={styles.buttonText}>Save</Text>
@@ -251,6 +364,7 @@ const ShowFunction = () => {
 							onPress={() => {
 								setEdit(false);
 								setEditIndex(index);
+								deleteFunction(index);
 							}}
 						>
 							<Text style={styles.buttonText}>Delete</Text>

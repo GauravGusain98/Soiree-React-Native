@@ -14,10 +14,10 @@ const Drawer = createDrawerNavigator();
 const Home = () => {
 	return (
 		<Stack.Navigator>
-			<Stack.Screen name="Homepage" component={Homepage} options={{ headerShown: false }} />
 			<Stack.Screen name="SignIn" component={LoginForm} options={{ headerShown: false }} />
 			<Stack.Screen name="Register" component={Registered} options={{ headerShown: false }} />
 			<Stack.Screen name="Verification" component={Verification} options={{ headerShown: false }} />
+			<Stack.Screen name="Homepage" component={Homepage} options={{ headerShown: false }} />
 		</Stack.Navigator>
 		/* <Drawer.Navigator>
 			<Drawer.Screen name="SignIn" component={LoginForm} options={{ headerShown: false }} />

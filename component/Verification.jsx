@@ -54,7 +54,7 @@ const Verification = ({ navigation, route }) => {
 	const [ error, setError ] = useState(null);
 	const submit = () => {
 		console.log(code);
-		fetch('http://soiree.test/api/mobile-verify', {
+		fetch('http://192.168.29.122/api/mobile-verify', {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',

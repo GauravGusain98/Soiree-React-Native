@@ -160,7 +160,7 @@ const AddFunction = () => {
 		}
 		let str2 = functionData.eventData.length == 0 ? str1 : str1.substring(0, str1.length - 1) + ', ' + str;
 		console.log(str2);
-		fetch('http://192.168.29.121/api/add-functions', {
+		fetch('http://192.168.29.122/api/add-functions', {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
@@ -195,10 +195,12 @@ const AddFunction = () => {
 	};
 
 	const handleConfirmDate = (date) => {
-		var month = parseInt(date.getMonth()) < 9 ? '0' + date.getMonth() : date.getMonth();
-		var day = parseInt(date.getDate()) < 9 ? '0' + date.getDate() : date.getDate();
+		var month =
+			parseInt(date.getMonth()) + 1 <= 9 ? '0' + (parseInt(date.getMonth()) + 1) : parseInt(date.getMonth()) + 1;
+		var day = parseInt(date.getDate()) <= 9 ? '0' + date.getDate() : date.getDate();
 		var str = date.getFullYear() + '-' + month + '-' + day;
 		setFunctionData({ ...functionData, date: date.toDateString(), dateReal: str });
+		console.log(str);
 		setDatePickerVisibility(false);
 	};
 
@@ -219,8 +221,9 @@ const AddFunction = () => {
 	};
 
 	const deleteEvent = (index) => {
-		functionData.eventData.splice(index, 1);
-		setFunctionData({ ...functionData, eventData: functionData.eventData });
+		var temp = [ ...functionData ];
+		temp.eventData.splice(index, 1);
+		setFunctionData([ ...temp ]);
 	};
 
 	return (
